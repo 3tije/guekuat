@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>#GueKuat – Refleksi Umum</title>
+<style>
+:root{
+  --ink:#0f172a;--muted:#64748b;--blue:#0ea5e9;--purple:#8b5cf6;--green:#22c55e;
+  --card:rgba(255,255,255,.84);--line:rgba(15,23,42,.10);--shadow:0 22px 55px rgba(15,23,42,.14);
+  --dim:#0ea5e9;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+  background:
+    radial-gradient(circle at 10% 0%,rgba(14,165,233,.30),transparent 30%),
+    radial-gradient(circle at 90% 8%,rgba(139,92,246,.28),transparent 32%),
+    linear-gradient(135deg,#e0f2fe,#f5f3ff 55%,#ecfdf5);
+  min-height:100vh;
+}
+.wrap{max-width:920px;margin:auto;padding:16px}
+.top{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.74);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.topin{max-width:920px;margin:auto;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:950;display:flex;align-items:center;gap:8px}
+.brand img{width:42px;height:42px;object-fit:contain}
+.home{font-size:13px;font-weight:850;color:#334155;text-decoration:none;background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:999px}
+.progressbox{margin:8px 0 2px}
+.ptext{display:flex;justify-content:space-between;font-size:13px;color:#475569;font-weight:850;margin-bottom:6px}
+.track{height:10px;background:#dbeafe;border-radius:999px;overflow:hidden}
+.fill{height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));border-radius:999px;transition:.35s ease}
+
+.card{background:var(--card);border:1px solid rgba(255,255,255,.78);box-shadow:var(--shadow);border-radius:28px;padding:22px;backdrop-filter:blur(10px);margin:16px 0}
+.intro{text-align:center;padding:34px 20px}
+.intro-logo{width:130px;max-width:42vw;margin:0 auto 10px;display:block;filter:drop-shadow(0 18px 28px rgba(15,23,42,.16))}
+.intro h1{font-size:40px;margin:8px 0 8px;letter-spacing:-1.2px}
+.intro p{color:#475569;font-size:17px;line-height:1.58;max-width:680px;margin:0 auto}
+.btn{border:0;border-radius:999px;padding:14px 18px;font-weight:950;cursor:pointer;background:linear-gradient(135deg,var(--blue),var(--purple));color:white;box-shadow:0 16px 34px rgba(79,70,229,.25);font-size:15px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.secondary{background:#fff;color:#172033;border:1px solid var(--line);box-shadow:none}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:18px}
+
+.story-card{display:none}
+.story-card.active{display:block;animation:fade .35s ease both}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.scene{border-radius:24px;overflow:hidden;background:linear-gradient(135deg,#eef2ff,#f8fafc);border:1px solid var(--line);margin-bottom:16px;min-height:220px;display:grid;place-items:center;position:relative}
+.scene img{width:100%;height:auto;display:block}
+.placeholder{padding:42px 20px;text-align:center;color:#475569}
+.placeholder .big{font-size:56px;margin-bottom:8px}
+.tag{display:inline-flex;padding:7px 11px;border-radius:999px;background:color-mix(in srgb,var(--dim) 14%,white);color:#172033;border:1px solid color-mix(in srgb,var(--dim) 28%,white);font-weight:950;font-size:12px;margin-bottom:10px}
+.kicker{font-weight:950;color:var(--dim);font-size:13px;margin-bottom:5px}
+h2{margin:0 0 8px;font-size:30px;letter-spacing:-.7px}
+.quote{font-size:17px;font-weight:850;color:#334155;background:#fff;border-left:5px solid var(--dim);padding:12px 14px;border-radius:14px;margin:12px 0}
+.story{color:#475569;line-height:1.62;margin:0 0 14px;font-size:17px}
+.question{font-size:20px;font-weight:950;margin:16px 0 10px}
+.opts{display:grid;gap:10px}
+.opt{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;cursor:pointer;transition:.18s}
+.opt:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(15,23,42,.08)}
+.opt:has(input:checked){border-color:var(--dim);background:color-mix(in srgb,var(--dim) 9%,white);box-shadow:0 0 0 3px color-mix(in srgb,var(--dim) 14%,transparent)}
+input{accent-color:var(--dim);margin-top:4px}
+.saved{display:none;text-align:center;color:#16a34a;font-weight:950;margin-top:10px}
+.saved.show{display:block;animation:fade .25s ease both}
+
+.result{display:none;text-align:center}
+.result.show{display:block;animation:fade .45s ease both}
+.compass{font-size:62px;margin:4px 0}
+.score{font-size:62px;font-weight:1000;letter-spacing:-2px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent;margin:4px 0}
+.level{display:inline-flex;gap:8px;align-items:center;background:#111827;color:white;border-radius:999px;padding:10px 16px;font-weight:950;margin:8px 0 16px}
+.bars{display:grid;gap:12px;text-align:left;margin-top:14px}
+.barrow{background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px}
+.barrow b{display:flex;justify-content:space-between;margin-bottom:8px}
+.mini{height:11px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.mini i{display:block;height:100%;background:linear-gradient(90deg,var(--blue),var(--purple),var(--green));border-radius:999px}
+.advice{text-align:left;color:#334155;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-top:14px}
+.advice h3{margin:0 0 8px}
+.advice ul{margin:8px 0 0 20px}
+@media(max-width:560px){
+ .intro h1{font-size:34px}h2{font-size:25px}.card{padding:16px;border-radius:24px}.score{font-size:54px}.topin{align-items:flex-start;flex-direction:column}.scene{min-height:170px}
+}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="topin">
+  <div style="width:100%">
+   <div style="display:flex;justify-content:space-between;gap:10px;align-items:center">
+    <div class="brand"><img src="assets/images/logo-guekuat.webp" alt="#GueKuat" onerror="this.style.display='none'"><span>#GueKuat Umum</span></div>
+    <a class="home" href="index.html">Beranda</a>
+   </div>
+   <div class="progressbox">
+    <div class="ptext"><span id="epText">Cerita 0 dari 18</span><span id="pctText">0%</span></div>
+    <div class="track"><div class="fill" id="progress"></div></div>
+   </div>
+  </div>
+ </div>
+</header>
+
+<main class="wrap">
+<section class="card intro" id="intro">
+ <img class="intro-logo" src="assets/images/logo-guekuat.webp" alt="#GueKuat" onerror="this.style.display='none'">
+ <h1>Kompas Kekuatan Diri</h1>
+ <p>Ikuti <b>18 cerita reflektif</b> untuk mengenali cara kamu mengelola diri, berani bersikap, dan membangun dukungan. Tidak ada jawaban benar atau salah. Jawablah sesuai dirimu.</p>
+ <div class="actions"><button class="btn" onclick="startQuiz()">🧭 Mulai Refleksi</button><a class="btn secondary" href="index.html">Kembali</a></div>
+</section>
+
+<section id="quiz"></section>
+
+<section class="card result" id="result"></section>
+</main>
+
+<script>
+const ITEMS=[
+{dim:"Self Regulation",color:"#0ea5e9",image:"umum/01.webp",title:"Menghadapi Tekanan",quote:"Tekanan tidak selalu bisa dihindari, tetapi selalu bisa dikelola.",story:"Hari sudah malam. Pekerjaan masih menumpuk, pesan di HP terus masuk, dan besok ada agenda penting yang harus kamu hadapi.",q:"Apa yang paling mungkin kamu lakukan?",opts:["Tetap panik dan membiarkan semuanya berantakan","Mengerjakan yang terasa mudah saja tanpa prioritas","Berhenti sejenak, menenangkan diri, lalu memilih prioritas","Membuat rencana singkat, membatasi gangguan, dan mulai dari yang paling penting"]},
+{dim:"Self Regulation",color:"#0ea5e9",image:"umum/02.webp",title:"Pilihan di Persimpangan",quote:"Pilihan kecil hari ini sering menentukan arah besar hidupmu.",story:"Kamu punya tanggung jawab yang harus selesai. Pada saat yang sama, teman mengajakmu melakukan hal yang lebih menyenangkan.",q:"Apa yang paling menggambarkan dirimu?",opts:["Langsung ikut karena takut ketinggalan suasana","Menunda tanggung jawab dan berharap nanti sempat","Menjelaskan bahwa kamu perlu menyelesaikan tugas dulu","Menyusun waktu: tanggung jawab selesai dulu, baru ikut bila memungkinkan"]},
+{dim:"Self Regulation",color:"#0ea5e9",image:"umum/03.webp",title:"Saat Emosi Naik",quote:"Emosi adalah sinyal, bukan pengendali.",story:"Dalam sebuah pertemuan, seseorang mengkritikmu di depan orang lain. Kamu merasa tidak nyaman dan ingin langsung membalas.",q:"Apa responsmu?",opts:["Membalas dengan nada tinggi agar tidak diremehkan","Diam saja tetapi menyimpan kesal","Menarik napas dan menunda respons sampai lebih tenang","Menanggapi dengan tenang, lalu meminta klarifikasi secara baik"]},
+{dim:"Self Regulation",color:"#0ea5e9",image:"umum/04.webp",title:"Godaan Jalan Pintas",quote:"Yang cepat belum tentu membuatmu kuat.",story:"Ada tawaran cara instan untuk menyelesaikan masalah. Kelihatannya mudah, tetapi kamu merasa cara itu bertentangan dengan nilai yang kamu pegang.",q:"Apa yang kamu lakukan?",opts:["Mengambil jalan pintas karena yang penting selesai","Ikut saja karena banyak orang juga melakukannya","Menolak karena merasa tidak sesuai nilai diri","Mencari cara lain yang lebih benar walau butuh usaha"]},
+{dim:"Self Regulation",color:"#0ea5e9",image:"umum/05.webp",title:"Tetap pada Nilai",quote:"Nilai diri terlihat saat kamu berani berbeda.",story:"Di lingkunganmu, banyak orang memilih cara yang menurutmu kurang tepat. Kamu merasa ragu karena tidak ingin berbeda sendiri.",q:"Apa yang paling mungkin kamu lakukan?",opts:["Ikut saja agar tidak terlihat berbeda","Diam dan membiarkan diri ikut arus","Tetap memilih yang menurutmu benar","Menjaga prinsip sambil mengajak orang lain berpikir lebih jernih"]},
+{dim:"Self Regulation",color:"#0ea5e9",image:"umum/06.webp",title:"Menunda Lagi",quote:"Disiplin dimulai dari langkah kecil yang tetap dilakukan.",story:"Kamu tahu ada hal penting yang harus dikerjakan. Namun rasa malas dan keinginan menunda mulai muncul.",q:"Apa pilihanmu?",opts:["Menunda lagi sampai benar-benar terdesak","Membuka hiburan dulu agar merasa lebih siap","Mulai dari bagian kecil selama beberapa menit","Membuat batas waktu, mulai sekarang, dan memberi jeda setelah ada kemajuan"]},
+
+{dim:"Assertiveness",color:"#8b5cf6",image:"umum/07.webp",title:"Pendapat Berbeda",quote:"Berani bersikap bukan berarti harus keras.",story:"Dalam diskusi, hampir semua orang setuju pada satu pendapat. Kamu melihat ada sisi lain yang penting, tetapi takut dianggap mengganggu.",q:"Apa yang kamu lakukan?",opts:["Diam saja agar aman","Setuju walaupun sebenarnya ragu","Menyampaikan pendapat dengan hati-hati","Menyampaikan pandangan dengan jelas, disertai alasan dan tetap menghargai yang lain"]},
+{dim:"Assertiveness",color:"#8b5cf6",image:"umum/08.webp",title:"Tekanan Kelompok",quote:"Kamu tetap berharga meski tidak selalu ikut arus.",story:"Beberapa teman mendesakmu ikut kegiatan yang membuatmu kurang nyaman. Mereka bercanda, tetapi tekanannya terasa nyata.",q:"Apa responsmu?",opts:["Ikut saja agar tidak jadi bahan candaan","Mencari alasan untuk menghindar tanpa berkata jelas","Mengatakan bahwa kamu tidak nyaman","Menolak dengan tegas dan memilih kegiatan yang lebih sesuai dengan dirimu"]},
+{dim:"Assertiveness",color:"#8b5cf6",image:"umum/09.webp",title:"Menjaga Batas",quote:"Batas yang sehat adalah bentuk menghargai diri.",story:"Ada orang yang terus meminta sesuatu darimu, padahal kamu sudah lelah dan tidak sanggup.",q:"Apa yang kamu lakukan?",opts:["Tetap memenuhi permintaannya walau terpaksa","Menghindar tanpa penjelasan","Menyampaikan bahwa kamu butuh waktu dan tidak bisa saat ini","Menjelaskan batasmu dengan tegas, sopan, dan menawarkan alternatif bila memungkinkan"]},
+{dim:"Assertiveness",color:"#8b5cf6",image:"umum/10.webp",title:"Mengingatkan Teman",quote:"Peduli kadang berarti berani mengingatkan.",story:"Kamu melihat teman mulai mengambil keputusan yang berpotensi merugikan dirinya. Kamu khawatir, tetapi takut ia tersinggung.",q:"Apa yang kamu lakukan?",opts:["Membiarkan karena itu urusannya","Membicarakannya dengan orang lain tanpa menemuinya","Mengajak bicara secara pribadi dan hati-hati","Mendekati dengan empati, mengingatkan risikonya, dan menawarkan dukungan"]},
+{dim:"Assertiveness",color:"#8b5cf6",image:"umum/11.webp",title:"Melihat Ketidakbenaran",quote:"Keberanian dimulai dari tidak membiarkan yang salah terlihat biasa.",story:"Kamu mengetahui ada tindakan yang dapat merugikan banyak orang. Jika diam, masalah mungkin akan semakin besar.",q:"Apa yang paling mungkin kamu lakukan?",opts:["Diam karena tidak ingin terlibat","Menunggu orang lain yang bertindak","Menyampaikan kepada orang yang tepat","Melapor melalui cara yang aman dan bertanggung jawab"]},
+{dim:"Assertiveness",color:"#8b5cf6",image:"umum/12.webp",title:"Diskusi Memanas",quote:"Tenang adalah kekuatan saat suasana mulai panas.",story:"Saat berdiskusi, seseorang mulai meninggikan suara. Kamu tidak setuju, tetapi ingin menjaga suasana tetap baik.",q:"Apa sikapmu?",opts:["Ikut meninggikan suara agar pendapatmu didengar","Diam total dan menyerah","Menyampaikan pendapat dengan suara lebih tenang","Mengajak kembali ke pokok masalah, memakai bahasa yang jelas dan menghargai"]},
+
+{dim:"Reaching Out",color:"#22c55e",image:"umum/13.webp",title:"Tidak Harus Sendiri",quote:"Meminta bantuan bukan tanda lemah, tetapi tanda sadar diri.",story:"Kamu sedang lelah secara pikiran dan emosi. Rasanya berat, tetapi kamu tidak ingin orang lain tahu.",q:"Apa yang biasanya kamu lakukan?",opts:["Memendam semuanya sendiri","Mengalihkan dengan aktivitas tanpa menyelesaikan masalah","Bercerita kepada satu orang yang dipercaya","Menghubungi orang terpercaya dan menyampaikan apa yang benar-benar kamu rasakan"]},
+{dim:"Reaching Out",color:"#22c55e",image:"umum/14.webp",title:"Teman Berubah",quote:"Kepedulian kecil bisa menjadi awal pertolongan besar.",story:"Kamu melihat temanmu berubah beberapa hari terakhir. Ia lebih diam, menarik diri, dan tidak seperti biasanya.",q:"Apa responsmu?",opts:["Menganggap itu bukan urusanmu","Hanya memperhatikan dari jauh","Menyapa dan menanyakan keadaannya","Mengajak bicara dengan hangat, mendengarkan, dan mendorongnya mencari bantuan bila perlu"]},
+{dim:"Reaching Out",color:"#22c55e",image:"umum/15.webp",title:"Dukungan Keluarga",quote:"Rumah yang sehat adalah tempat berani bercerita.",story:"Ada masalah yang cukup berat. Kamu tahu keluarga mungkin bisa membantu, tetapi kamu ragu memulai pembicaraan.",q:"Apa yang kamu lakukan?",opts:["Menyembunyikan semuanya dari keluarga","Menunggu sampai masalahnya selesai sendiri","Mencari waktu yang tepat untuk bercerita","Menyampaikan masalah dengan jujur dan meminta dukungan yang kamu butuhkan"]},
+{dim:"Reaching Out",color:"#22c55e",image:"umum/16.webp",title:"Mencari Mentor",quote:"Arah yang baik sering hadir melalui orang yang tepat.",story:"Kamu harus mengambil keputusan penting. Kamu punya banyak pertimbangan dan merasa butuh sudut pandang yang lebih matang.",q:"Apa pilihanmu?",opts:["Memutuskan asal cepat selesai","Mengikuti pendapat mayoritas tanpa berpikir ulang","Bertanya kepada orang yang lebih berpengalaman","Mencari masukan dari mentor/orang terpercaya, lalu menimbang keputusan dengan jernih"]},
+{dim:"Reaching Out",color:"#22c55e",image:"umum/17.webp",title:"Lingkungan Positif",quote:"Lingkungan yang baik membantu dirimu bertumbuh.",story:"Ada kesempatan bergabung dalam komunitas atau kegiatan yang bermanfaat. Kamu tertarik, tetapi belum yakin bisa konsisten.",q:"Apa yang paling menggambarkan dirimu?",opts:["Tidak ikut karena malas mencoba hal baru","Menunggu diajak berkali-kali","Mencoba hadir dan melihat manfaatnya","Aktif bergabung, membangun relasi positif, dan belajar dari lingkungan itu"]},
+{dim:"Reaching Out",color:"#22c55e",image:"umum/18.webp",title:"Versi Terbaik Dirimu",quote:"Bertumbuh bukan menjadi sempurna, tetapi terus bergerak ke arah yang lebih baik.",story:"Kamu ingin menjadi pribadi yang lebih kuat, punya hubungan yang sehat, dan hidup dengan kegiatan yang lebih bermakna.",q:"Apa langkahmu?",opts:["Membiarkan hidup berjalan apa adanya","Menunggu perubahan datang sendiri","Memilih satu kebiasaan baik untuk mulai dilakukan","Membuat rencana kecil, mencari dukungan, dan konsisten memperbaiki diri"]}
+];
+
+let idx=0, answers=Array(ITEMS.length).fill(null);
+
+function render(){
+ const root=document.getElementById("quiz"); root.innerHTML="";
+ ITEMS.forEach((it,i)=>{
+  const sec=document.createElement("section");
+  sec.className="card story-card"; sec.id="ep"+i;
+  sec.style.setProperty("--dim", it.color);
+  sec.innerHTML=`
+    <div class="scene">
+      <img src="${it.image}" alt="Ilustrasi ${it.title}" loading="lazy"
+        onerror="this.style.display='none';this.parentElement.innerHTML='<div class=&quot;placeholder&quot;><div class=&quot;big&quot;>🧭</div><b>Ilustrasi cerita ${i+1}</b><br><span>Upload gambar ke folder: ${it.image}</span></div>';">
+    </div>
+    <div class="kicker">CERITA ${String(i+1).padStart(2,"0")}</div>
+    <span class="tag">${it.dim==="Self Regulation"?"🧠 Mengelola Diri":it.dim==="Assertiveness"?"💬 Berani Bersikap":"🤝 Membangun Dukungan"}</span>
+    <h2>${it.title}</h2>
+    <div class="quote">“${it.quote}”</div>
+    <p class="story">${it.story}</p>
+    <div class="question">${it.q}</div>
+    <div class="opts">${it.opts.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"><span>${o}</span></label>`).join("")}</div>
+    <div class="saved" id="saved${i}">✓ Jawaban tersimpan</div>
+    <div class="actions">
+      <button class="btn secondary" onclick="prev()" ${i===0?"style='display:none'":""}>← Kembali</button>
+      <button class="btn" onclick="next()">${i===ITEMS.length-1?"Lihat Kompas":"Lanjut →"}</button>
+    </div>`;
+  root.appendChild(sec);
+ });
+ document.querySelectorAll("input[type=radio]").forEach(el=>el.addEventListener("change",e=>{
+   const n=parseInt(e.target.name.replace("q","")); answers[n]=parseInt(e.target.value);
+   document.getElementById("saved"+n).classList.add("show"); updateProgress();
+ }));
+}
+
+function startQuiz(){document.getElementById("intro").style.display="none";idx=0;showEp();}
+function showEp(){
+ document.querySelectorAll(".story-card").forEach(e=>e.classList.remove("active"));
+ const current=document.getElementById("ep"+idx);
+ current.classList.add("active");
+ document.documentElement.style.setProperty("--dim", ITEMS[idx].color);
+ updateProgress();
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function next(){
+ if(answers[idx]===null){alert("Pilih jawaban dulu ya ✍️");return;}
+ if(idx<ITEMS.length-1){idx++;showEp();}else showResult();
+}
+function prev(){if(idx>0){idx--;showEp();}}
+function updateProgress(){
+ const answered=answers.filter(x=>x!==null).length; const pct=Math.round(answered/ITEMS.length*100);
+ document.getElementById("progress").style.width=pct+"%"; document.getElementById("pctText").textContent=pct+"%";
+ document.getElementById("epText").textContent=document.getElementById("intro").style.display==="none" ? `Cerita ${idx+1} dari ${ITEMS.length}` : `Cerita 0 dari ${ITEMS.length}`;
+}
+
+function pct(val,max){return Math.round(val/max*100);}
+function showResult(){
+ document.getElementById("quiz").style.display="none";
+ const total=answers.reduce((a,b)=>a+b,0), max=ITEMS.length*3, totalPct=pct(total,max);
+ const dims={
+  SR:{s:0,m:0,name:"Mengelola Diri",icon:"🧠"},
+  A:{s:0,m:0,name:"Berani Bersikap",icon:"💬"},
+  RO:{s:0,m:0,name:"Membangun Dukungan",icon:"🤝"}
+ };
+ ITEMS.forEach((it,i)=>{
+   const key=it.dim==="Self Regulation"?"SR":it.dim==="Assertiveness"?"A":"RO";
+   dims[key].s+=answers[i]; dims[key].m+=3;
+ });
+ let label,level,emoji,saran;
+ if(totalPct<=40){label="Mulai Bertumbuh";level="Level 1";emoji="🌱";saran=["Latih jeda sebelum merespons tekanan.","Pilih satu kebiasaan kecil yang bisa dilakukan hari ini.","Cari satu orang terpercaya untuk diajak bicara."];}
+ else if(totalPct<=60){label="Berkembang";level="Level 2";emoji="🌿";saran=["Perkuat kebiasaan positif saat stres.","Latih kalimat singkat untuk menyampaikan batas diri.","Bangun rutinitas dukungan dengan teman atau keluarga."];}
+ else if(totalPct<=82){label="Tangguh";level="Level 3";emoji="🌳";saran=["Jaga konsistensi saat berada dalam tekanan.","Gunakan pengaruh positif untuk menguatkan teman.","Evaluasi perkembangan diri secara berkala."];}
+ else{label="GueKuat";level="Level 4";emoji="🛡️";saran=["Jadilah teladan dan teman bertumbuh bagi orang sekitar.","Ambil peran dalam kegiatan positif di lingkunganmu.","Terus jaga keseimbangan antara prinsip, komunikasi, dan dukungan."];}
+ const weakest=Object.entries(dims).map(([k,v])=>({k,p:pct(v.s,v.m)})).sort((a,b)=>a.p-b.p)[0].k;
+ const focus={SR:"Mengelola Diri",A:"Berani Bersikap",RO:"Membangun Dukungan"}[weakest];
+ const bar=k=>{const p=pct(dims[k].s,dims[k].m);return `<div class="barrow"><b><span>${dims[k].icon} ${dims[k].name}</span><span>${p}%</span></b><div class="mini"><i style="width:${p}%"></i></div></div>`}
+ const result=document.getElementById("result"); result.classList.add("show");
+ result.innerHTML=`
+ <div class="compass">🧭</div>
+ <h2>Kompas Kekuatan Dirimu</h2>
+ <div class="score">${totalPct}%</div>
+ <div class="level">${emoji} ${level} — ${label}</div>
+ <div class="bars">${bar("SR")}${bar("A")}${bar("RO")}</div>
+ <div class="advice">
+   <h3>Kekuatan Utama</h3>
+   <p>Hasil ini menunjukkan gambaran cara kamu mengelola diri, menyampaikan sikap, dan membangun dukungan saat menghadapi situasi kehidupan sehari-hari.</p>
+   <h3>Area Penguatan</h3>
+   <p>Prioritas kecil yang bisa kamu latih berikutnya: <b>${focus}</b>.</p>
+   <h3>Langkah Bertumbuh</h3>
+   <ul>${saran.map(x=>`<li>${x}</li>`).join("")}</ul>
+ </div>
+ <div class="actions"><button class="btn" onclick="shareResult(${totalPct},'${label}')">Bagikan Hasil</button><button class="btn secondary" onclick="location.reload()">Ulangi Refleksi</button><a class="btn secondary" href="index.html">Beranda</a></div>`;
+ document.getElementById("epText").textContent="Selesai"; document.getElementById("pctText").textContent="100%"; document.getElementById("progress").style.width="100%";
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function shareResult(pct,label){
+ const text=`Aku sudah mencoba #GueKuat – Kompas Kekuatan Diri. Hasilku: ${pct}% — ${label}.`;
+ if(navigator.share){navigator.share({title:"#GueKuat",text});}else{navigator.clipboard.writeText(text);alert("Teks hasil sudah disalin. Bisa ditempel ke WA/IG.");}
+}
+render();updateProgress();
+</script>
+</body>
+</html>
