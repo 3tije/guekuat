@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Twibbon Gue Kuat</title>
+
 <style>
 body{
   margin:0;
@@ -22,75 +23,80 @@ canvas{
   max-width:500px;
   border-radius:18px;
   box-shadow:0 10px 30px #0002;
-  background:#fff;
+  background:white;
+  touch-action:none;
 }
-button,input{
-  margin:10px 0;
-  padding:14px 18px;
-  border:none;
+input,button{
+  margin:8px;
+  padding:13px 18px;
   border-radius:12px;
-  font-size:16px;
+  border:none;
+  font-size:15px;
 }
 button{
-  background:#006ee6;
+  background:#0077ff;
   color:white;
   font-weight:bold;
 }
-input{
+.control{
   background:white;
+  border-radius:16px;
+  padding:12px;
+  margin:12px 0;
+}
+label{
+  font-weight:bold;
 }
 </style>
 </head>
-<body>
 
+<body>
 <div class="wrap">
   <h1>Twibbon Gue Kuat</h1>
-  <p>Upload fotomu, lalu unduh hasilnya.</p>
+  <p>Upload foto, geser, zoom, lalu unduh hasilnya.</p>
 
   <input type="file" id="upload" accept="image/*">
 
   <canvas id="canvas" width="1080" height="1080"></canvas>
 
-  <br>
-  <button onclick="downloadTwibbon()">⬇️ Download Twibbon</button>
+  <div class="control">
+    <label>Zoom Foto</label><br>
+    <input type="range" id="zoom" min="0.4" max="3" step="0.01" value="1">
+    <br>
+    <button onclick="resetFoto()">Reset Foto</button>
+    <button onclick="downloadTwibbon()">⬇️ Download</button>
+  </div>
 </div>
 
 <script>
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
+const upload = document.getElementById("upload");
+const zoomSlider = document.getElementById("zoom");
 
 const frame = new Image();
-frame.crossOrigin = "anonymous";
 frame.src = "../assets/twibbon-umum.png";
 
 let userImg = null;
-
-function drawCoverImage(img, cx, cy, diameter){
-  const r = diameter / 2;
-
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.clip();
-
-  const scale = Math.max(diameter / img.width, diameter / img.height);
-  const w = img.width * scale;
-  const h = img.height * scale;
-
-  ctx.drawImage(img, cx - w/2, cy - h/2, w, h);
-  ctx.restore();
-}
+let imgX = 540;
+let imgY = 500;
+let zoom = 1;
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
 
 function drawCanvas(){
   ctx.clearRect(0,0,1080,1080);
-  ctx.fillStyle = "#ffffff";
+  ctx.fillStyle = "#fff";
   ctx.fillRect(0,0,1080,1080);
 
   if(userImg){
-    const scale = Math.max(1080 / userImg.width, 1080 / userImg.height);
+    const base = Math.max(720 / userImg.width, 720 / userImg.height);
+    const scale = base * zoom;
     const w = userImg.width * scale;
     const h = userImg.height * scale;
-    ctx.drawImage(userImg, 540 - w/2, 540 - h/2, w, h);
+
+    ctx.drawImage(userImg, imgX - w/2, imgY - h/2, w, h);
   }
 
   ctx.drawImage(frame,0,0,1080,1080);
@@ -98,22 +104,81 @@ function drawCanvas(){
 
 frame.onload = drawCanvas;
 
-frame.onerror = function(){
-  alert("File twibbon belum terbaca. Cek lokasi: assets/twibbon-umum.png");
-};
-
-document.getElementById("upload").addEventListener("change", function(e){
+upload.addEventListener("change", e=>{
   const file = e.target.files[0];
   if(!file) return;
 
   const reader = new FileReader();
-  reader.onload = function(event){
+  reader.onload = ev=>{
     userImg = new Image();
-    userImg.onload = drawCanvas;
-    userImg.src = event.target.result;
+    userImg.onload = ()=>{
+      imgX = 540;
+      imgY = 500;
+      zoom = 1;
+      zoomSlider.value = 1;
+      drawCanvas();
+    };
+    userImg.src = ev.target.result;
   };
   reader.readAsDataURL(file);
 });
+
+zoomSlider.addEventListener("input", e=>{
+  zoom = parseFloat(e.target.value);
+  drawCanvas();
+});
+
+function getPos(e){
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.touches ? e.touches[0] : e;
+  return {
+    x:(touch.clientX - rect.left) * (1080 / rect.width),
+    y:(touch.clientY - rect.top) * (1080 / rect.height)
+  };
+}
+
+canvas.addEventListener("mousedown", startDrag);
+canvas.addEventListener("mousemove", drag);
+canvas.addEventListener("mouseup", endDrag);
+canvas.addEventListener("mouseleave", endDrag);
+
+canvas.addEventListener("touchstart", startDrag);
+canvas.addEventListener("touchmove", drag);
+canvas.addEventListener("touchend", endDrag);
+
+function startDrag(e){
+  if(!userImg) return;
+  e.preventDefault();
+  dragging = true;
+  const p = getPos(e);
+  lastX = p.x;
+  lastY = p.y;
+}
+
+function drag(e){
+  if(!dragging || !userImg) return;
+  e.preventDefault();
+
+  const p = getPos(e);
+  imgX += p.x - lastX;
+  imgY += p.y - lastY;
+  lastX = p.x;
+  lastY = p.y;
+
+  drawCanvas();
+}
+
+function endDrag(){
+  dragging = false;
+}
+
+function resetFoto(){
+  imgX = 540;
+  imgY = 500;
+  zoom = 1;
+  zoomSlider.value = 1;
+  drawCanvas();
+}
 
 function downloadTwibbon(){
   const link = document.createElement("a");
