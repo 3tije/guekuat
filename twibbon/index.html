@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Twibbon Gue Kuat</title>
+<style>
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#eaf7ff;
+  text-align:center;
+  color:#123;
+}
+.wrap{
+  max-width:520px;
+  margin:auto;
+  padding:20px;
+}
+canvas{
+  width:100%;
+  max-width:500px;
+  border-radius:18px;
+  box-shadow:0 10px 30px #0002;
+  background:#fff;
+}
+button,input{
+  margin:10px 0;
+  padding:14px 18px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+}
+button{
+  background:#006ee6;
+  color:white;
+  font-weight:bold;
+}
+input{
+  background:white;
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <h1>Twibbon Gue Kuat</h1>
+  <p>Upload fotomu, lalu unduh hasilnya.</p>
+
+  <input type="file" id="upload" accept="image/*">
+
+  <canvas id="canvas" width="1080" height="1080"></canvas>
+
+  <br>
+  <button onclick="downloadTwibbon()">⬇️ Download Twibbon</button>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const frame = new Image();
+frame.src = "../assets/twibbon-umum.png";
+
+let userImg = null;
+
+function drawCanvas(){
+  ctx.clearRect(0,0,1080,1080);
+
+  if(userImg){
+    ctx.save();
+
+    // posisi foto di lingkaran tengah
+    ctx.beginPath();
+    ctx.arc(560,460,300,0,Math.PI*2);
+    ctx.closePath();
+    ctx.clip();
+
+    const size = Math.max(userImg.width, userImg.height);
+    const scale = 720 / size;
+    const w = userImg.width * scale;
+    const h = userImg.height * scale;
+
+    ctx.drawImage(userImg, 560 - w/2, 460 - h/2, w, h);
+    ctx.restore();
+  }
+
+  ctx.drawImage(frame,0,0,1080,1080);
+}
+
+frame.onload = drawCanvas;
+
+document.getElementById("upload").addEventListener("change", function(e){
+  const file = e.target.files[0];
+  if(!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(event){
+    userImg = new Image();
+    userImg.onload = drawCanvas;
+    userImg.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+function downloadTwibbon(){
+  const link = document.createElement("a");
+  link.download = "twibbon-gue-kuat.png";
+  link.href = canvas.toDataURL("image/png");
+  link.click();
+}
+</script>
+
+</body>
+</html>
