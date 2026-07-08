@@ -87,7 +87,10 @@ function drawCanvas(){
   ctx.fillRect(0,0,1080,1080);
 
   if(userImg){
-    drawCoverImage(userImg, 560, 500, 650);
+    const scale = Math.max(1080 / userImg.width, 1080 / userImg.height);
+    const w = userImg.width * scale;
+    const h = userImg.height * scale;
+    ctx.drawImage(userImg, 540 - w/2, 540 - h/2, w, h);
   }
 
   ctx.drawImage(frame,0,0,1080,1080);
