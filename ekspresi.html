@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6d4aff" />
+  <title>Cermin Diri #GueKuat</title>
+  <script src="https://cdn.jsdelivr.net/npm/@vladmandic/human/dist/human.js"></script>
+  <style>
+    :root{
+      --primary:#6d4aff; --secondary:#16b8a6; --accent:#ffca3a;
+      --ink:#202238; --muted:#69708a; --surface:#fff; --bg:#f4f5fb;
+      --danger:#d74c68; --shadow:0 18px 50px rgba(45,35,100,.12);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;color:var(--ink);background:
+      radial-gradient(circle at 10% 0%,#ebe5ff 0,transparent 32%),
+      radial-gradient(circle at 100% 20%,#dffaf6 0,transparent 28%),var(--bg)}
+    button,input,select{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:1040px;margin:auto;padding:20px 16px 56px}
+    .hero{background:linear-gradient(135deg,#6d4aff,#8e67ff 55%,#19b9a8);color:white;border-radius:30px;padding:28px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+    .hero:after{content:"";position:absolute;width:220px;height:220px;border:34px solid rgba(255,255,255,.1);border-radius:50%;right:-80px;top:-80px}
+    .brand{display:flex;gap:12px;align-items:center;font-weight:800}
+    .brandmark{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;background:#fff;color:var(--primary);font-size:24px}
+    h1{font-size:clamp(28px,5vw,52px);line-height:1.05;margin:22px 0 10px;max-width:700px}
+    .hero p{max-width:670px;margin:0;color:rgba(255,255,255,.9);font-size:17px}
+    .privacy{display:inline-flex;gap:8px;align-items:center;margin-top:18px;padding:9px 13px;border-radius:999px;background:rgba(255,255,255,.15);font-size:13px}
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:18px 0}
+    .step{background:rgba(255,255,255,.94);padding:14px;border-radius:18px;box-shadow:0 10px 30px rgba(45,35,100,.08)}
+    .step b{display:block;margin-bottom:4px}
+    .step span{font-size:13px;color:var(--muted)}
+    .panel{background:rgba(255,255,255,.94);border:1px solid rgba(109,74,255,.08);border-radius:26px;padding:22px;box-shadow:var(--shadow);margin-top:18px}
+    .section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;margin-bottom:16px}
+    .section-head h2{margin:0 0 5px;font-size:24px}
+    .section-head p{margin:0;color:var(--muted)}
+    .uploadbox{border:2px dashed #c8c0f4;border-radius:22px;padding:26px;text-align:center;background:#faf9ff}
+    .uploadbox input{display:none}
+    .btn{border:0;border-radius:14px;padding:12px 17px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+    .btn.primary{background:var(--primary);color:#fff}
+    .btn.secondary{background:#e8fbf8;color:#087d71}
+    .btn.light{background:#f0edff;color:var(--primary)}
+    .btn.dark{background:#24263b;color:white}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .photo-preview{display:none;max-width:420px;width:100%;max-height:420px;object-fit:contain;margin:18px auto 0;border-radius:22px;background:#eee}
+    .status{text-align:center;color:var(--muted);font-size:14px;margin-top:12px;min-height:20px}
+    .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .emotion-card{background:linear-gradient(145deg,#f7f4ff,#f4fffd);border-radius:22px;padding:22px;min-height:310px;display:flex;flex-direction:column;justify-content:center}
+    .emotion-icon{font-size:56px}
+    .emotion-name{font-size:32px;font-weight:900;margin:8px 0}
+    .confidence{display:inline-block;font-size:12px;font-weight:800;color:#7259c9;background:#ece7ff;border-radius:999px;padding:7px 10px;width:max-content}
+    .reflection{font-size:17px;line-height:1.65;margin:16px 0}
+    .question{border-left:4px solid var(--secondary);padding:10px 14px;background:white;border-radius:0 13px 13px 0;font-weight:700}
+    .notice{font-size:12px;color:var(--muted);margin-top:14px}
+    .empty{color:var(--muted);text-align:center;padding:44px 12px}
+    .editor{display:grid;grid-template-columns:minmax(280px,1fr) minmax(240px,.7fr);gap:20px;align-items:start}
+    .canvas-wrap{position:relative;max-width:480px;margin:auto;touch-action:none;user-select:none}
+    canvas{width:100%;display:block;border-radius:22px;box-shadow:0 14px 40px rgba(30,25,65,.2);background:#ddd}
+    .editor-help{text-align:center;color:var(--muted);font-size:12px;margin-top:10px}
+    .controls{display:grid;gap:14px}
+    .control{background:#f7f7fc;border-radius:17px;padding:14px}
+    .control label{font-weight:800;display:flex;justify-content:space-between;margin-bottom:10px}
+    input[type="range"]{width:100%}
+    .themes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .theme{border:2px solid transparent;background:#fff;border-radius:15px;padding:11px;text-align:left}
+    .theme.active{border-color:var(--primary);background:#f3efff}
+    .theme b{display:block}
+    .theme span{font-size:11px;color:var(--muted)}
+    .actions{display:grid;gap:10px}
+    .share-note{font-size:12px;color:var(--muted);line-height:1.5}
+    .hidden{display:none!important}
+    footer{text-align:center;color:var(--muted);font-size:12px;padding-top:24px}
+    @media(max-width:760px){
+      .steps,.result-grid,.editor{grid-template-columns:1fr}
+      .hero{padding:23px;border-radius:24px}
+      .panel{padding:17px}
+      .section-head{display:block}
+    }
+  </style>
+</head>
+<body>
+<main class="app">
+  <section class="hero">
+    <div class="brand"><div class="brandmark">✦</div><div>Cermin Diri <span style="opacity:.75">#GueKuat</span></div></div>
+    <h1>Lihat ekspresimu. Dengarkan dirimu. Bagikan semangatmu.</h1>
+    <p>Satu foto menghasilkan dua pengalaman terpisah: refleksi ekspresi untuk dirimu dan Bingkai Semangat yang aman dibagikan.</p>
+    <div class="privacy">🔒 Foto diproses di perangkat dan tidak disimpan oleh halaman ini</div>
+  </section>
+
+  <div class="steps">
+    <div class="step"><b>1. Ambil Foto</b><span>Gunakan kamera atau pilih dari galeri.</span></div>
+    <div class="step"><b>2. Kenali Ekspresi</b><span>Dapatkan refleksi ringan, bukan diagnosis.</span></div>
+    <div class="step"><b>3. Buat Bingkai</b><span>Atur foto lalu simpan dan bagikan.</span></div>
+  </div>
+
+  <section class="panel">
+    <div class="section-head">
+      <div><h2>Mulai dari satu foto</h2><p>Pilih foto dengan wajah terlihat jelas dan pencahayaan cukup.</p></div>
+    </div>
+    <div class="uploadbox">
+      <div style="font-size:44px;margin-bottom:10px">📸</div>
+      <label for="photoInput" class="btn primary">Ambil / Pilih Foto</label>
+      <input id="photoInput" type="file" accept="image/*" capture="user">
+      <img id="photoPreview" class="photo-preview" alt="Pratinjau foto">
+      <div id="status" class="status">Belum ada foto dipilih.</div>
+    </div>
+  </section>
+
+  <section id="expressionSection" class="panel">
+    <div class="section-head">
+      <div><h2>Refleksi Ekspresi</h2><p>Hasil ini bersifat pribadi dan tidak masuk ke gambar yang dibagikan.</p></div>
+      <button id="analyzeBtn" class="btn secondary" disabled>✨ Baca Ekspresi</button>
+    </div>
+    <div class="result-grid">
+      <div id="emotionCard" class="emotion-card">
+        <div class="empty">Pilih foto, lalu tekan <b>Baca Ekspresi</b>.</div>
+      </div>
+      <div class="emotion-card">
+        <div>
+          <div style="font-size:36px">🪞</div>
+          <h3 style="font-size:23px;margin:10px 0">Jeda Sejenak</h3>
+          <p style="line-height:1.65;color:var(--muted)">Ekspresi wajah hanyalah potret sesaat. Perasaan yang sebenarnya tetap paling baik dikenali melalui pengalaman dan ceritamu sendiri.</p>
+          <div class="question">Apa yang paling memenuhi pikiranmu hari ini?</div>
+          <a href="https://s.id/guekuat" target="_blank" rel="noopener" class="btn light" style="margin-top:16px;text-decoration:none">Lanjut Refleksi di #GueKuat</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="frameSection" class="panel">
+    <div class="section-head">
+      <div><h2>Bingkai Semangat</h2><p>Geser foto langsung pada gambar, lalu atur perbesarannya.</p></div>
+    </div>
+    <div class="editor">
+      <div>
+        <div id="canvasWrap" class="canvas-wrap">
+          <canvas id="frameCanvas" width="1080" height="1350"></canvas>
+        </div>
+        <div class="editor-help">Sentuh dan geser foto untuk mengatur posisi wajah.</div>
+      </div>
+      <div class="controls">
+        <div class="control">
+          <label><span>Pilih Bingkai</span></label>
+          <div class="themes">
+            <button class="theme active" data-theme="strong"><b>Aku #GueKuat</b><span>Tegas dan energik</span></button>
+            <button class="theme" data-theme="calm"><b>Jeda & Tumbuh</b><span>Hangat dan reflektif</span></button>
+          </div>
+        </div>
+        <div class="control">
+          <label for="zoom"><span>Perbesar Foto</span><span id="zoomVal">100%</span></label>
+          <input id="zoom" type="range" min="1" max="3" value="1" step="0.01">
+        </div>
+        <div class="control">
+          <label for="brightness"><span>Kecerahan</span><span id="brightVal">100%</span></label>
+          <input id="brightness" type="range" min="70" max="135" value="100">
+        </div>
+        <div class="actions">
+          <button id="resetBtn" class="btn light" disabled>↺ Atur Ulang Foto</button>
+          <button id="downloadBtn" class="btn dark" disabled>⬇ Simpan Bingkai Semangat</button>
+          <button id="shareBtn" class="btn primary" disabled>↗ Bagikan</button>
+        </div>
+        <div class="share-note">Yang dibagikan hanya foto dalam Bingkai Semangat. Hasil Refleksi Ekspresi tetap terpisah.</div>
+      </div>
+    </div>
+  </section>
+  <footer>Cermin Diri #GueKuat • Refleksi, bukan penilaian kepribadian atau diagnosis psikologis.</footer>
+</main>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const photoInput = $('#photoInput');
+const preview = $('#photoPreview');
+const statusEl = $('#status');
+const analyzeBtn = $('#analyzeBtn');
+const emotionCard = $('#emotionCard');
+const canvas = $('#frameCanvas');
+const ctx = canvas.getContext('2d');
+const zoom = $('#zoom');
+const brightness = $('#brightness');
+const zoomVal = $('#zoomVal');
+const brightVal = $('#brightVal');
+const resetBtn = $('#resetBtn');
+const downloadBtn = $('#downloadBtn');
+const shareBtn = $('#shareBtn');
+const wrap = $('#canvasWrap');
+
+let sourceImage = null;
+let imageURL = null;
+let theme = 'strong';
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+let dragging = false;
+let lastX = 0;
+let lastY = 0;
+let human = null;
+
+const emotionMap = {
+  happy: {name:'Ceria', icon:'😊', text:'Ada energi positif yang tampak dari ekspresimu. Nikmati momen ini dan ingat apa yang membuatmu merasa lebih hidup.', q:'Hal baik apa yang ingin kamu teruskan hari ini?'},
+  sad: {name:'Murung', icon:'😔', text:'Ekspresimu tampak sedang menanggung sesuatu. Tidak apa-apa berhenti sejenak dan memberi ruang untuk perasaanmu.', q:'Dukungan apa yang paling kamu butuhkan sekarang?'},
+  angry: {name:'Tegang', icon:'😠', text:'Ada ketegangan yang tertangkap pada wajahmu. Sebelum bereaksi, beri dirimu waktu untuk bernapas dan memahami pemicunya.', q:'Apa yang sebenarnya ingin kamu lindungi atau sampaikan?'},
+  fear: {name:'Waspada', icon:'😟', text:'Ekspresimu terlihat cukup waspada. Perasaan ini bisa menjadi tanda bahwa ada hal yang perlu dipahami dengan lebih aman dan perlahan.', q:'Apa yang dapat membuatmu merasa sedikit lebih aman?'},
+  disgust: {name:'Kurang Nyaman', icon:'😣', text:'Wajahmu tampak menunjukkan ketidaknyamanan. Coba kenali apakah ada situasi, pikiran, atau batas diri yang sedang terganggu.', q:'Batas sehat apa yang perlu kamu tegaskan?'},
+  surprise: {name:'Terkejut', icon:'😮', text:'Ada kesan terkejut atau spontan pada ekspresimu. Mungkin ada sesuatu yang baru, tidak terduga, atau sedang menarik perhatianmu.', q:'Apa hal baru yang sedang kamu coba pahami?'},
+  neutral: {name:'Tenang', icon:'😌', text:'Ekspresimu tampak cukup netral dan tenang. Ini bisa menjadi kesempatan baik untuk memeriksa keadaan diri tanpa terburu-buru.', q:'Apa yang sedang kamu rasakan di balik ketenangan ini?'}
+};
+
+function roundedRect(x,y,w,h,r){
+  ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+function fitBase(){
+  if(!sourceImage) return;
+  const cover = Math.max(canvas.width/sourceImage.width, canvas.height/sourceImage.height);
+  scale = cover;
+  offsetX = (canvas.width-sourceImage.width*scale)/2;
+  offsetY = (canvas.height-sourceImage.height*scale)/2;
+  zoom.value = 1;
+  zoomVal.textContent = '100%';
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  if(!sourceImage){
+    const g=ctx.createLinearGradient(0,0,1080,1350); g.addColorStop(0,'#e8e4fa');g.addColorStop(1,'#dff8f3');
+    ctx.fillStyle=g;ctx.fillRect(0,0,1080,1350);
+    ctx.fillStyle='#77718c';ctx.textAlign='center';ctx.font='700 42px system-ui';ctx.fillText('Foto akan tampil di sini',540,655);
+    ctx.font='28px system-ui';ctx.fillText('Pilih atau ambil foto terlebih dahulu',540,705);
+    return;
+  }
+  ctx.save();
+  ctx.filter=`brightness(${brightness.value}%)`;
+  const userZoom=parseFloat(zoom.value);
+  ctx.drawImage(sourceImage,offsetX,offsetY,sourceImage.width*scale*userZoom,sourceImage.height*scale*userZoom);
+  ctx.restore();
+  drawOverlay();
+}
+
+function drawOverlay(){
+  const isStrong=theme==='strong';
+  const grad=ctx.createLinearGradient(0,0,1080,1350);
+  if(isStrong){grad.addColorStop(0,'rgba(77,47,198,.15)');grad.addColorStop(.65,'rgba(31,17,79,.05)');grad.addColorStop(1,'rgba(26,15,65,.92)');}
+  else{grad.addColorStop(0,'rgba(12,151,136,.06)');grad.addColorStop(.6,'rgba(8,44,48,.04)');grad.addColorStop(1,'rgba(8,73,73,.9)');}
+  ctx.fillStyle=grad;ctx.fillRect(0,0,1080,1350);
+
+  ctx.save();
+  roundedRect(54,52,400,76,28);
+  ctx.fillStyle=isStrong?'rgba(109,74,255,.92)':'rgba(18,166,149,.92)';ctx.fill();
+  ctx.fillStyle='#fff';ctx.font='800 31px system-ui';ctx.textAlign='left';ctx.fillText('CERMIN DIRI #GueKuat',86,101);
+  ctx.restore();
+
+  ctx.fillStyle='#fff';ctx.textAlign='left';
+  ctx.font='900 67px system-ui';
+  const title=isStrong?'AKU MEMILIH':'AKU BERANI';
+  ctx.fillText(title,64,1110);
+  ctx.font='900 84px system-ui';
+  ctx.fillText(isStrong?'LEBIH KUAT':'MENGENALI DIRI',64,1195);
+  ctx.font='600 28px system-ui';
+  ctx.fillStyle='rgba(255,255,255,.9)';
+  ctx.fillText(isStrong?'Kenali Diri • Kelola Emosi • Berani Cari Bantuan':'Jeda • Dengarkan Diri • Tumbuh Perlahan',68,1250);
+
+  roundedRect(810,1175,210,76,28);ctx.fillStyle=isStrong?'#ffca3a':'#e9fffb';ctx.fill();
+  ctx.fillStyle=isStrong?'#32265f':'#087d71';ctx.font='900 27px system-ui';ctx.textAlign='center';ctx.fillText('s.id/guekuat',915,1223);
+
+  ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=8;roundedRect(24,24,1032,1302,34);ctx.stroke();
+}
+
+photoInput.addEventListener('change', async e=>{
+  const file=e.target.files?.[0]; if(!file)return;
+  if(imageURL) URL.revokeObjectURL(imageURL);
+  imageURL=URL.createObjectURL(file);
+  sourceImage=new Image();
+  sourceImage.onload=()=>{
+    preview.src=imageURL;preview.style.display='block';
+    fitBase();draw();
+    analyzeBtn.disabled=false;resetBtn.disabled=false;downloadBtn.disabled=false;shareBtn.disabled=false;
+    statusEl.textContent='Foto siap. Kamu dapat membaca ekspresi dan membuat Bingkai Semangat.';
+    $('#expressionSection').scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  sourceImage.onerror=()=>statusEl.textContent='Foto tidak dapat dibaca. Coba pilih foto lain.';
+  sourceImage.src=imageURL;
+});
+
+async function initHuman(){
+  if(human)return human;
+  human=new Human.Human({
+    modelBasePath:'https://vladmandic.github.io/human/models',
+    face:{enabled:true,detector:{enabled:true,rotation:true},mesh:{enabled:true},emotion:{enabled:true},description:{enabled:false},iris:{enabled:false}},
+    body:{enabled:false},hand:{enabled:false},object:{enabled:false},gesture:{enabled:false},
+    filter:{enabled:true,equalization:false}
+  });
+  await human.load();
+  await human.warmup();
+  return human;
+}
+
+analyzeBtn.addEventListener('click',async()=>{
+  if(!sourceImage)return;
+  analyzeBtn.disabled=true;analyzeBtn.textContent='⏳ Membaca...';
+  emotionCard.innerHTML='<div class="empty">Sedang mengenali ekspresi yang tampak…</div>';
+  try{
+    const h=await initHuman();
+    const result=await h.detect(sourceImage);
+    const face=result.face?.[0];
+    if(!face){
+      emotionCard.innerHTML='<div class="empty"><b>Wajah belum terdeteksi.</b><br><br>Coba gunakan foto dari depan, lebih dekat, dan dengan cahaya yang cukup.</div>';
+      return;
+    }
+    const emotions=(face.emotion||[]).slice().sort((a,b)=>b.score-a.score);
+    const top=emotions[0]||{emotion:'neutral',score:0};
+    const key=(top.emotion||'neutral').toLowerCase();
+    const data=emotionMap[key]||emotionMap.neutral;
+    const confidence=Math.round((top.score||0)*100);
+    emotionCard.innerHTML=`
+      <div class="emotion-icon">${data.icon}</div>
+      <div class="emotion-name">${data.name}</div>
+      <div class="confidence">Kecocokan visual ${confidence}%</div>
+      <div class="reflection">${data.text}</div>
+      <div class="question">${data.q}</div>
+      <div class="notice">Hasil ini membaca pola visual pada foto, bukan memastikan perasaan, sifat, atau kondisi psikologismu.</div>`;
+  }catch(err){
+    console.error(err);
+    emotionCard.innerHTML='<div class="empty"><b>Analisis belum dapat dijalankan.</b><br><br>Pastikan perangkat terhubung ke internet saat pertama kali membuka fitur ini, lalu coba kembali.</div>';
+  }finally{
+    analyzeBtn.disabled=false;analyzeBtn.textContent='✨ Baca Lagi';
+  }
+});
+
+document.querySelectorAll('.theme').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.theme').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');theme=btn.dataset.theme;draw();
+}));
+
+zoom.addEventListener('input',()=>{
+  zoomVal.textContent=Math.round(parseFloat(zoom.value)*100)+'%';draw();
+});
+brightness.addEventListener('input',()=>{
+  brightVal.textContent=brightness.value+'%';draw();
+});
+resetBtn.addEventListener('click',()=>{brightness.value=100;brightVal.textContent='100%';fitBase();draw();});
+
+function pointerPos(e){
+  const r=canvas.getBoundingClientRect();
+  return {x:(e.clientX-r.left)*(canvas.width/r.width),y:(e.clientY-r.top)*(canvas.height/r.height)};
+}
+wrap.addEventListener('pointerdown',e=>{if(!sourceImage)return;dragging=true;wrap.setPointerCapture(e.pointerId);const p=pointerPos(e);lastX=p.x;lastY=p.y});
+wrap.addEventListener('pointermove',e=>{if(!dragging)return;const p=pointerPos(e);offsetX+=p.x-lastX;offsetY+=p.y-lastY;lastX=p.x;lastY=p.y;draw()});
+wrap.addEventListener('pointerup',()=>dragging=false);
+wrap.addEventListener('pointercancel',()=>dragging=false);
+
+function makeBlob(){
+  return new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+}
+downloadBtn.addEventListener('click',async()=>{
+  const blob=await makeBlob();if(!blob)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='bingkai-semangat-guekuat.png';a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+});
+shareBtn.addEventListener('click',async()=>{
+  const blob=await makeBlob();if(!blob)return;
+  const file=new File([blob],'bingkai-semangat-guekuat.png',{type:'image/png'});
+  if(navigator.canShare?.({files:[file]})){
+    try{await navigator.share({files:[file],title:'Bingkai Semangat #GueKuat',text:'Aku memilih mengenali diri dan menjadi lebih kuat. #GueKuat'});}catch(e){}
+  }else{
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=file.name;a.click();
+    alert('Gambar telah disimpan. Silakan bagikan melalui WhatsApp atau media sosial.');
+  }
+});
+
+draw();
+</script>
+</body>
+</html>
